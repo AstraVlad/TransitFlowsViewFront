@@ -12,7 +12,7 @@ import RoutesMap from './routesmap';
 import TFErrorsAndWarnings from './analytics/tferrorsandwarnings';
 import { useState } from 'react';
 import { useEffect } from 'react';
-
+import DeckGLMap from './deckglmap';
 
 export default function TFDasboard() {
     const selectedFile = useContext(DataContext)
@@ -89,6 +89,7 @@ export default function TFDasboard() {
 
                 <RoutesOverlap ></RoutesOverlap>
                 <StopsClusters />
+                <DeckGLMap objects={data} />
                 <br />
             </div>
         )
