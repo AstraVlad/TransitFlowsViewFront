@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
-export default function ZeroFlows({ zeroFlows, signalSelected }) {
+export default function ZeroFlows({ zeroFlows }) {
     const [selectedRow, setSelectedRow] = useState(-1)
 
     const processTableClick = (_, route, index) => {

@@ -5,8 +5,10 @@ import MissingStops from "./missingstops";
 import ZeroFlows from "./zeroflows";
 import { Button } from "@mui/material";
 import Divider from "@mui/material/Divider";
+import { useState } from "react";
 
-export default function TFErrorsAndWarnings({ data, signalSelected }) {
+export default function TFErrorsAndWarnings({ data, signalSelected, switchZeroFlows }) {
+    const [zeroFlowsShown, setZeroFlowsShown] = useState(false)
 
     return (
         <div style={{ marginLeft: 5 }}>
@@ -23,7 +25,15 @@ export default function TFErrorsAndWarnings({ data, signalSelected }) {
             <Divider variant="middle" />
             <h2 style={{ color: data.zero_flows.length > 0 ? 'red' : 'green' }}>
                 Перегонов с нулевыми пассажиропотоками за день: {data.zero_flows.length}
-                <Button color="secondary" variant="outlined" sx={{ ml: 2 }}>Отобразить на карте</Button>
+                <Button color={zeroFlowsShown ? "secondary" : 'primary'}
+                    variant={zeroFlowsShown ? 'outlined' : "text"}
+                    onClick={() => {
+                        setZeroFlowsShown(!zeroFlowsShown)
+                        switchZeroFlows()
+                    }}
+                    sx={{ ml: 2 }}>
+                    {zeroFlowsShown ? 'Убрать с карты' : 'Показать на карте'}
+                </Button>
             </h2>
             <ZeroFlows zeroFlows={data.zero_flows} />
             <br />
