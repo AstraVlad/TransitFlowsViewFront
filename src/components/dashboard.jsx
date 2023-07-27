@@ -1,43 +1,26 @@
 
 import Summary from './analytics/summary';
 import { Box, Paper, Typography } from '@mui/material'
-import RoutesOverlap from './analytics/routesoverlap';
-import StopsClusters from './analytics/stopsclusters';
+//import RoutesOverlap from './analytics/routesoverlap';
+//import StopsClusters from './analytics/stopsclusters';
 import MaximumsPerRoutes from './analytics/maximums';
 import { getSingleProject } from "../utils/getdata";
 import { DataContext } from '../contexts/DataContext';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
-//import RoutesMap from './routesmap';
 import TFErrorsAndWarnings from './analytics/tferrorsandwarnings';
 import { useState } from 'react';
-import { useEffect } from 'react';
 import { useRef } from 'react';
 import DeckGLMap from './deckglmap';
 
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 export default function TFDasboard() {
-    const selectedFile = useContext(DataContext)
+    const { selectedFile, setSelectedFile } = useContext(DataContext)
     const [selectedRoute, setSelectedRoute] = useState('')
     const stopsAsMap = useRef(0)
-    const [highlightObjects, setHighlightObjects] = useState({
-        stops: [],
-        routes: [],
-        zeroFlows: []
-    })
 
     const { data, isError, isLoading } = getSingleProject(selectedFile)
-    //const isLoading = false
-
-    const switchZeroFlows = () => {
-
-        setHighlightObjects({
-            stops: highlightObjects.stops,
-            routes: highlightObjects.routes,
-            zeroFlows: highlightObjects.zeroFlows.length > 0 ? [] : data.errors.zero_flows
-        })
-    }
 
     const switchSelectedRoute = (selection) => {
         if (JSON.stringify(selection) == JSON.stringify(selectedRoute)) {
@@ -46,12 +29,7 @@ export default function TFDasboard() {
             setSelectedRoute(selection)
         }
     }
-    /*
-        useEffect(() => {
-            console.log(highlightObjects)
-    
-        }, [highlightObjects])
-    */
+
     if (isLoading) {
         return (
             <Box borderColor='red'>
@@ -89,27 +67,23 @@ export default function TFDasboard() {
                     <Summary data={data.summary} />
                 </Paper>
                 <Grid container spacing={2}>
-                    <Grid item sm={12} md={6} >
+                    <Grid item sm={12} md={4} >
                         <Paper elevation={2}>
-                            <TFErrorsAndWarnings data={data.errors} signalSelected={switchSelectedRoute} switchZeroFlows={switchZeroFlows} />
+                            <TFErrorsAndWarnings data={data.errors} signalSelected={switchSelectedRoute} />
                         </Paper>
                     </Grid>
-                    <Grid item sm={12} md={6}>
-                        <Paper elevation={2}>
+                    <Grid item sm={12} md={7}>
+                        <Paper elevation={2} >
                             <h1 style={{ marginLeft: 5 }}>Интерактивная карта</h1>
                             <DeckGLMap objects={data}
                                 stopsAsMap={stopsAsMap.current}
-                                highlightObjects={highlightObjects} />
+                            />
                         </Paper>
                     </Grid>
                 </Grid>
                 <Paper elevation={2}>
                     <MaximumsPerRoutes data={data.maximums} />
                 </Paper>
-
-                <RoutesOverlap ></RoutesOverlap>
-                <StopsClusters />
-
                 <br />
             </div>
         )

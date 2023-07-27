@@ -1,23 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 export default function ZeroFlows({ zeroFlows }) {
-    const [selectedRow, setSelectedRow] = useState(-1)
 
-    const processTableClick = (_, route, index) => {
-        if (index == selectedRow) {
-            setSelectedRow(-1)
-        } else {
-            setSelectedRow(index)
-        }
-        /*signalSelected({
-            rname: route.rname_full,
-            direction: route.direction,
-            nextStop: route.stop_to,
-        })*/
-    }
     return (
-        <TableContainer sx={{ maxWidth: '47vw', minWidth: 400, maxHeight: 500, m: 1 }}>
+        <TableContainer sx={{ maxWidth: '47vw', minWidth: 400, height: 350, m: 1 }}>
             <Table size="small" >
                 <TableHead >
                     <TableRow>
@@ -30,10 +17,7 @@ export default function ZeroFlows({ zeroFlows }) {
                 <TableBody>
                     {zeroFlows.map((elem, index) => {
                         return (<TableRow key={index}
-                            onClick={(e) => processTableClick(e, elem, index)}
                             hover
-                            selected={selectedRow == index}
-                            sx={{ cursor: 'pointer' }}
                         >
                             <TableCell>{elem.rname_full}</TableCell>
                             <TableCell sx={{ textAlign: 'center' }}>{elem.direction}</TableCell>

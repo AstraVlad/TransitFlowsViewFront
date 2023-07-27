@@ -17,7 +17,7 @@ export default function MissingStops({ missingStops, signalSelected }) {
         })
     }
     return (
-        <TableContainer sx={{ maxWidth: '47vw', minWidth: 400, maxHeight: 500, m: 1 }}>
+        <TableContainer sx={{ maxWidth: '47vw', minWidth: 400, height: 350, m: 1 }}>
             <Table size="small" >
                 <TableHead >
                     <TableRow>

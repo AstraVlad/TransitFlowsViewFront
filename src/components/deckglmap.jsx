@@ -37,12 +37,22 @@ const getCenter = (data) => {
 
 const customTooltip = (object) => {
     let text
-    if (object) {
+    if (object != null) {
         text = `${object.name}
         `
-        if (object.day) {
-            text = text + 'поток в день: ' + object.day.toLocaleString(undefined, { maximumFractionDigits: 1 }) + ' чел.'
+        if (object.flow) {
+            text = text + 'пассажиропоток: ' + object.flow.toLocaleString(undefined, { maximumFractionDigits: 1 }) + ' чел.'
         }
+        if (object.direction) {
+            text = text + `
+            Направление: ${object.direction}`
+        }
+        if (object.id) {
+            text = text + `
+            Id: ${object.id}`
+        }
+    } else {
+        return null
     }
     return {
         text,
@@ -57,54 +67,10 @@ const customTooltip = (object) => {
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // DeckGL react component
-export default function DeckGLMap({ objects, stopsAsMap, highlightObjects }) {
-    const [visibleLayers, setVisibleLayers] = useState(() => ['stops'])
+export default function DeckGLMap({ objects, stopsAsMap }) {
+    const [visibleLayers, setVisibleLayers] = useState(() => ['stops', 'Тм', "Тб", "Ав"])
     const mapCenter = useMemo(() => getCenter(objects.stops), [objects])
-    const [routesCoordinates, setRoutesCoordinates] = useState([])
     const [isHighlighted, setIsHighlighted] = useState(false)
-
-    const testIsHighlighted = () => {
-        let result = false
-        for (const key in highlightObjects) {
-            result = result || highlightObjects[key].length > 0
-        }
-        //console.log(result)
-        return result
-    }
-
-    useEffect(() => {
-        setIsHighlighted(testIsHighlighted())
-    }, [highlightObjects])
-
-    const processRouteOneDirection = (routeOneDirection) => {
-        if (Array.isArray(routeOneDirection)) {
-            return routeOneDirection.reduce((array, stopId) => {
-                if (stopId === null) {
-                    array.push([])
-                    return array
-                }
-                array[array.length - 1].push([stopsAsMap.get(stopId).lat, stopsAsMap.get(stopId).long])
-                return array
-            }, [[]])
-        } else {
-            return 0
-        }
-    }
-    /*
-        useEffect(() => {
-            //console.log(objects, stopsAsMap)
-            const coords = objects.registry.map((elem) => {
-                return {
-                    'rnum': elem.rname_full,
-                    'vtype': elem.vtype,
-                    'stopsAB': processRouteOneDirection(elem.stops_ab),
-                    'stopsBA': processRouteOneDirection(elem.stops_ba),
-                }
-            })
-            setRoutesCoordinates(coords)
-            console.log(coords)
-        }, [objects])
-    */
 
     const radius = 10
     const viewState = {
@@ -121,17 +87,23 @@ export default function DeckGLMap({ objects, stopsAsMap, highlightObjects }) {
     //const MAP_STYLE = 'https://api.maptiler.com/tiles/v3/tiles.json?key=kznYvrAC6DrOZXPCW05C';
     //const MAP_STYLE = 'https://api.maptiler.com/maps/openstreetmap/style.json?key=dCONZDYyeGeUjElb5LHi'
 
+    const highlighters = ['missStops', 'zeroFlows', 'maxFlows']
     const handleLayerSwitcherClick = (_, layer) => {
+        setIsHighlighted(layer.filter(e => highlighters.includes(e)).length > 0)
         setVisibleLayers(layer)
     }
+    const tiltLimit = 30
 
     return (
         <Box display='flex' flexDirection='column' alignContent='center' justifyContent='center' sx={{ p: 1 }}>
-            <ToggleButtonGroup value={visibleLayers} size='small' color='secondary' onChange={handleLayerSwitcherClick}>
+            <ToggleButtonGroup value={visibleLayers} size='small' color='info' onChange={handleLayerSwitcherClick}>
                 <ToggleButton value='stops'>Остановки</ToggleButton>
-                <ToggleButton value='Тм'>Трамвай</ToggleButton>
-                <ToggleButton value='Тб'>Троллейбус</ToggleButton>
-                <ToggleButton value='Ав'>Автобус</ToggleButton>
+                <ToggleButton value='Тм'>Трамвай (поток в день)</ToggleButton>
+                <ToggleButton value='Тб'>Троллейбус (поток в день)</ToggleButton>
+                <ToggleButton value='Ав'>Автобус (поток в день)</ToggleButton>
+                <ToggleButton value='missStops'>Нет остановок отправления</ToggleButton>
+                <ToggleButton value='zeroFlows' disabled={!objects.errors.zero_flows}> Перегоны с нулевым потоком</ToggleButton>
+                <ToggleButton value='maxFlows'>Пиковые перегоны (поток в час)</ToggleButton>
             </ToggleButtonGroup>
 
             <div className="my-container"
@@ -187,12 +159,13 @@ export default function DeckGLMap({ objects, stopsAsMap, highlightObjects }) {
                         widthUnits='meters'
                         widthScale={0.0035}
                         widthMinPixels={1}
-                        getWidth={d => d.day}
+                        getWidth={d => d.flow}
                         getSourcePosition={d => [d.coords_from[1], d.coords_from[0]]}
                         getTargetPosition={d => [d.coords_to[1], d.coords_to[0]]}
                         getSourceColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
                         getTargetColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
                         visible={visibleLayers.includes('Тм')}
+                        getTilt={() => tiltLimit * (Math.random() - 0.5)}
                     />
                     <ArcLayer
                         id='trolley_routes'
@@ -201,12 +174,13 @@ export default function DeckGLMap({ objects, stopsAsMap, highlightObjects }) {
                         widthUnits='meters'
                         widthScale={0.0035}
                         widthMinPixels={1}
-                        getWidth={d => d.day}
+                        getWidth={d => d.flow}
                         getSourcePosition={e => [e.coords_from[1], e.coords_from[0]]}
                         getTargetPosition={e => [e.coords_to[1], e.coords_to[0]]}
                         getSourceColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
                         getTargetColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
                         visible={visibleLayers.includes('Тб')}
+                        getTilt={() => tiltLimit * (Math.random() - 0.5)}
                     />
                     <ArcLayer
                         id='bus_routes'
@@ -215,22 +189,40 @@ export default function DeckGLMap({ objects, stopsAsMap, highlightObjects }) {
                         widthUnits='meters'
                         widthScale={0.0035}
                         widthMinPixels={1}
-                        getWidth={d => d.day}
+                        getWidth={d => d.flow}
                         getSourcePosition={e => [e.coords_from[1], e.coords_from[0]]}
                         getTargetPosition={e => [e.coords_to[1], e.coords_to[0]]}
                         getSourceColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
                         getTargetColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
                         visible={visibleLayers.includes('Ав')}
+                        getTilt={() => tiltLimit * (Math.random() - 0.5)}
                     />
                     <ArcLayer
                         id='zero_flows'
-                        data={highlightObjects.zeroFlows}
+                        data={objects.errors.zero_flows}
                         pickable={true}
                         getWidth={5}
                         getSourcePosition={d => [stopsAsMap.get(d.stop_from).long, stopsAsMap.get(d.stop_from).lat]}
                         getTargetPosition={d => [stopsAsMap.get(d.stop_to).long, stopsAsMap.get(d.stop_to).lat]}
                         getSourceColor={d => mapColors.routes[d.vtype].higlighted}
                         getTargetColor={d => mapColors.routes[d.vtype].higlighted}
+                        visible={visibleLayers.includes('zeroFlows')}
+                        getTilt={() => tiltLimit * (Math.random() - 0.5)}
+                    />
+                    <ArcLayer
+                        id='maxFlows'
+                        data={objects.maximums}
+                        pickable={true}
+                        widthUnits='meters'
+                        widthScale={10 * 0.0035}
+                        widthMinPixels={1}
+                        getWidth={d => d.flow}
+                        getSourcePosition={d => [stopsAsMap.get(d.stop_from).long, stopsAsMap.get(d.stop_from).lat]}
+                        getTargetPosition={d => [stopsAsMap.get(d.stop_to).long, stopsAsMap.get(d.stop_to).lat]}
+                        getSourceColor={d => mapColors.routes[d.vtype].higlighted}
+                        getTargetColor={d => mapColors.routes[d.vtype].higlighted}
+                        visible={visibleLayers.includes('maxFlows')}
+                        getTilt={() => tiltLimit * (Math.random() - 0.5)}
                     />
                 </DeckGL>
             </div>

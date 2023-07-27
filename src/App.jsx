@@ -44,12 +44,14 @@ function App() {
   useEffect(() => {
     if (selectedFile) {
       window.localStorage.setItem('selectedFile_FILE', JSON.stringify(selectedFile))
+    } else {
+      window.localStorage.removeItem('selectedFile_FILE')
     }
   }, [selectedFile])
 
 
   return (
-    <DataContext.Provider value={selectedFile}>
+    <DataContext.Provider value={{ selectedFile, setSelectedFile }}>
       <ThemeProvider theme={theme}>
         <Box sx={{
           width: '98vw',
