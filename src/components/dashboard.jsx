@@ -24,7 +24,7 @@ export default function TFDasboard() {
     const [highlightObjects, setHighlightObjects] = useState({
         stops: [],
         routes: [],
-        routeFragments: []
+        zeroFlows: []
     })
 
     const { data, isError, isLoading } = getSingleProject(selectedFile)
@@ -35,7 +35,7 @@ export default function TFDasboard() {
         setHighlightObjects({
             stops: highlightObjects.stops,
             routes: highlightObjects.routes,
-            routeFragments: highlightObjects.routeFragments.length > 0 ? [] : data.errors.zero_flows
+            zeroFlows: highlightObjects.zeroFlows.length > 0 ? [] : data.errors.zero_flows
         })
     }
 
@@ -46,12 +46,12 @@ export default function TFDasboard() {
             setSelectedRoute(selection)
         }
     }
-
-    useEffect(() => {
-        console.log(highlightObjects)
-
-    }, [highlightObjects])
-
+    /*
+        useEffect(() => {
+            console.log(highlightObjects)
+    
+        }, [highlightObjects])
+    */
     if (isLoading) {
         return (
             <Box borderColor='red'>

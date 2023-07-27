@@ -25,12 +25,33 @@ const INITIAL_VIEW_STATE = {
 };
 
 const getCenter = (data) => {
-    console.log('GetCenter got called')
+    //console.log('GetCenter got called')
     const summCoord = data.reduce((prev, curr) => ({ lat: prev.lat + curr.lat, long: prev.long + curr.long })
         , { lat: 0, long: 0 })
     return {
         latitude: summCoord.lat / data.length,
         longitude: summCoord.long / data.length,
+    }
+}
+
+
+const customTooltip = (object) => {
+    let text
+    if (object) {
+        text = `${object.name}
+        `
+        if (object.day) {
+            text = text + 'поток в день: ' + object.day.toLocaleString(undefined, { maximumFractionDigits: 1 }) + ' чел.'
+        }
+    }
+    return {
+        text,
+        style: {
+            'position': 'absolute',
+            'color': '#FFFFFF',
+            'background-color': '#858585BB',
+            'padding': '10px',
+        }
     }
 }
 
@@ -47,7 +68,7 @@ export default function DeckGLMap({ objects, stopsAsMap, highlightObjects }) {
         for (const key in highlightObjects) {
             result = result || highlightObjects[key].length > 0
         }
-        console.log(result)
+        //console.log(result)
         return result
     }
 
@@ -69,28 +90,29 @@ export default function DeckGLMap({ objects, stopsAsMap, highlightObjects }) {
             return 0
         }
     }
-
-    useEffect(() => {
-        //console.log(objects, stopsAsMap)
-        const coords = objects.registry.map((elem) => {
-            return {
-                'rnum': elem.rname_full,
-                'vtype': elem.vtype,
-                'stopsAB': processRouteOneDirection(elem.stops_ab),
-                'stopsBA': processRouteOneDirection(elem.stops_ba),
-            }
-        })
-        setRoutesCoordinates(coords)
-        console.log(coords)
-    }, [objects])
+    /*
+        useEffect(() => {
+            //console.log(objects, stopsAsMap)
+            const coords = objects.registry.map((elem) => {
+                return {
+                    'rnum': elem.rname_full,
+                    'vtype': elem.vtype,
+                    'stopsAB': processRouteOneDirection(elem.stops_ab),
+                    'stopsBA': processRouteOneDirection(elem.stops_ba),
+                }
+            })
+            setRoutesCoordinates(coords)
+            console.log(coords)
+        }, [objects])
+    */
 
     const radius = 10
     const viewState = {
         longitude: mapCenter.longitude,
         latitude: mapCenter.latitude,
         zoom: 10,
-        pitch: 30,
-        bearing: 0
+        pitch: 50,
+        bearing: 20
     }
 
     //const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidWNmLW1hcGJveCIsImEiOiJjbDBiYzlveHgwdnF0M2NtZzUzZWZuNWZ4In0.l9J8ptz3MKwaU9I4PtCcig'
@@ -118,6 +140,9 @@ export default function DeckGLMap({ objects, stopsAsMap, highlightObjects }) {
                 <DeckGL
                     initialViewState={viewState ? viewState : INITIAL_VIEW_STATE}
                     controller={true}
+
+                    pickingRadius={5}
+                    getTooltip={({ object }) => customTooltip(object)}
                 >
                     <TileLayer
                         data='https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -154,15 +179,58 @@ export default function DeckGLMap({ objects, stopsAsMap, highlightObjects }) {
                         visible={visibleLayers.includes('stops')}
                         updateTriggers={{ getFillColor: [isHighlighted] }}
                     />
+
                     <ArcLayer
-                        id='arc-layer'
-                        data={highlightObjects.routeFragments}
+                        id='tram_routes'
+                        data={objects.routes_details.filter((elem) => elem.vtype == 'Тм')}
+                        pickable={true}
+                        widthUnits='meters'
+                        widthScale={0.0035}
+                        widthMinPixels={1}
+                        getWidth={d => d.day}
+                        getSourcePosition={d => [d.coords_from[1], d.coords_from[0]]}
+                        getTargetPosition={d => [d.coords_to[1], d.coords_to[0]]}
+                        getSourceColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
+                        getTargetColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
+                        visible={visibleLayers.includes('Тм')}
+                    />
+                    <ArcLayer
+                        id='trolley_routes'
+                        data={objects.routes_details.filter((elem) => elem.vtype == 'Тб')}
+                        pickable={true}
+                        widthUnits='meters'
+                        widthScale={0.0035}
+                        widthMinPixels={1}
+                        getWidth={d => d.day}
+                        getSourcePosition={e => [e.coords_from[1], e.coords_from[0]]}
+                        getTargetPosition={e => [e.coords_to[1], e.coords_to[0]]}
+                        getSourceColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
+                        getTargetColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
+                        visible={visibleLayers.includes('Тб')}
+                    />
+                    <ArcLayer
+                        id='bus_routes'
+                        data={objects.routes_details.filter((elem) => elem.vtype == 'Ав')}
+                        pickable={true}
+                        widthUnits='meters'
+                        widthScale={0.0035}
+                        widthMinPixels={1}
+                        getWidth={d => d.day}
+                        getSourcePosition={e => [e.coords_from[1], e.coords_from[0]]}
+                        getTargetPosition={e => [e.coords_to[1], e.coords_to[0]]}
+                        getSourceColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
+                        getTargetColor={d => isHighlighted ? mapColors.routes[d.vtype].muted : mapColors.routes[d.vtype].normal}
+                        visible={visibleLayers.includes('Ав')}
+                    />
+                    <ArcLayer
+                        id='zero_flows'
+                        data={highlightObjects.zeroFlows}
                         pickable={true}
                         getWidth={5}
                         getSourcePosition={d => [stopsAsMap.get(d.stop_from).long, stopsAsMap.get(d.stop_from).lat]}
                         getTargetPosition={d => [stopsAsMap.get(d.stop_to).long, stopsAsMap.get(d.stop_to).lat]}
-                        getSourceColor={[255, 0, 0]}
-                        getTargetColor={[255, 0, 0]}
+                        getSourceColor={d => mapColors.routes[d.vtype].higlighted}
+                        getTargetColor={d => mapColors.routes[d.vtype].higlighted}
                     />
                 </DeckGL>
             </div>
