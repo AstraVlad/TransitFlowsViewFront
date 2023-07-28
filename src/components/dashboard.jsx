@@ -72,7 +72,7 @@ export default function TFDasboard() {
                             <TFErrorsAndWarnings data={data.errors} signalSelected={switchSelectedRoute} />
                         </Paper>
                     </Grid>
-                    <Grid item sm={12} md={7}>
+                    <Grid item sm={12} md={8}>
                         <Paper elevation={2} >
                             <h1 style={{ marginLeft: 5 }}>Интерактивная карта</h1>
                             <DeckGLMap objects={data}
@@ -81,6 +81,7 @@ export default function TFDasboard() {
                         </Paper>
                     </Grid>
                 </Grid>
+                <br />
                 <Paper elevation={2}>
                     <MaximumsPerRoutes data={data.maximums} />
                 </Paper>

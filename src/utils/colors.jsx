@@ -8,17 +8,23 @@ const mapColors = {
         'Ав': {
             normal: [23, 198, 53],
             higlighted: [0, 181, 15],
-            muted: [177, 215, 184, 180]
+            muted: [177, 215, 184, 180],
+            graph: '#50F78F',
+            text: 'lightgreen'
         },
         'Тб': {
             normal: [0, 77, 255],
             higlighted: [0, 253, 255],
-            muted: [149, 207, 239, 150]
+            muted: [149, 207, 239, 150],
+            graph: '#00A0FF',
+            text: 'lightblue'
         },
         'Тм': {
             normal: [213, 25, 28],
             higlighted: [255, 0, 0],
-            muted: [249, 183, 183, 150]
+            muted: [249, 183, 183, 150],
+            graph: '#FF0000',
+            text: '#F5A0A0'
         },
 
     }
