@@ -67,10 +67,12 @@ const customTooltip = (object) => {
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // DeckGL react component
-export default function DeckGLMap({ objects, stopsAsMap }) {
+export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
     const [visibleLayers, setVisibleLayers] = useState(() => ['stops', 'Тм', "Тб", "Ав"])
     const mapCenter = useMemo(() => getCenter(objects.stops), [objects])
     const [isHighlighted, setIsHighlighted] = useState(false)
+
+    //console.log(selectedRoute, Boolean(selectedRoute), objects.routes_details.filter((elem) => elem.rname_full == selectedRoute.rname_full))
 
     const radius = 10
     const viewState = {
@@ -223,6 +225,21 @@ export default function DeckGLMap({ objects, stopsAsMap }) {
                         getTargetColor={d => mapColors.routes[d.vtype].higlighted}
                         visible={visibleLayers.includes('maxFlows')}
                         getTilt={() => tiltLimit * (Math.random() - 0.5)}
+                    />
+                    <ArcLayer
+                        id='selectedRoute'
+                        data={objects.routes_details.filter((elem) => elem.rname_full == selectedRoute.rname_full)}
+                        pickable={false}
+                        widthUnits='meters'
+                        widthScale={10 * 0.0035}
+                        widthMinPixels={1}
+                        getWidth={d => d.flow}
+                        getSourcePosition={d => [stopsAsMap.get(d.stop_from).long, stopsAsMap.get(d.stop_from).lat]}
+                        getTargetPosition={d => [stopsAsMap.get(d.stop_to).long, stopsAsMap.get(d.stop_to).lat]}
+                        getSourceColor={[250, 250, 0]}
+                        getTargetColor={[250, 250, 0]}
+                        visible={selectedRoute}
+
                     />
                 </DeckGL>
             </div>

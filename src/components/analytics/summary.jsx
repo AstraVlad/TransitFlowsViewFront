@@ -1,11 +1,12 @@
 //import { Box } from "@mui/material";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { useState } from "react";
-import { PieChart, Pie, Cell, Label, ResponsiveContainer } from "recharts";
+//import { PieChart, Pie, Cell, Label, ResponsiveContainer } from "recharts";
 import mapColors from "../../utils/colors";
 import tramIcon from '../../assets/icons/tram.jpg'
 import trollIcon from '../../assets/icons/troll.jpg'
 import busIcon from '../../assets/icons/bus.jpg'
+import TwoVariablesPieChart from "../ui/twovariablespiechart";
 
 const vtypeIcons = {
     'Ав': busIcon,
@@ -34,7 +35,7 @@ export default function Summary({ data }) {
             </text>
         );
     };
-
+    //console.log(data)
     return (
         <Box display='flex' flexDirection='row'>
             <TableContainer sx={{ width: '47%', minWidth: 400, maxHeight: 500, m: 1 }}>
@@ -78,7 +79,26 @@ export default function Summary({ data }) {
             </TableContainer>
             <Box width='50%' sx={{ textAlign: 'center' }}>
                 <h2>Доля пассажиропотока по видам транспорта</h2>
-                <ResponsiveContainer width='100%' height={200} >
+                <TwoVariablesPieChart
+                    data={data}
+                    intenalRadius={20}
+                    maxExternalRadius={200}
+                    getWidth={(d) => d.rname_full}
+                    getHeight={(d) => d.in}
+                    gap={0}
+                    getColor={['green', 'red', 'blue', '#FBC02D']}
+                    rotate={0}
+                    strokeWidth={2}
+                    label={((d) => d.vtype)}
+                />
+                <br />
+            </Box>
+        </Box >
+    )
+}
+
+/*
+<ResponsiveContainer width='100%' height={200} >
                     <PieChart
                         width={300}
                         height={200}
@@ -99,8 +119,4 @@ export default function Summary({ data }) {
                         </Pie>
                     </PieChart>
                 </ResponsiveContainer>
-                <br />
-            </Box>
-        </Box >
-    )
-}
+*/

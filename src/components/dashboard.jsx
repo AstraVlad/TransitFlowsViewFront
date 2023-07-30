@@ -1,6 +1,6 @@
 
 import Summary from './analytics/summary';
-import { Box, Paper, Typography } from '@mui/material'
+import { Box, Paper, Tab, Tabs } from '@mui/material'
 //import RoutesOverlap from './analytics/routesoverlap';
 //import StopsClusters from './analytics/stopsclusters';
 import MaximumsPerRoutes from './analytics/maximums';
@@ -13,14 +13,22 @@ import { useState } from 'react';
 import { useRef } from 'react';
 import DeckGLMap from './deckglmap';
 
+import AllRoutes from './analytics/allroutes';
+
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 export default function TFDasboard() {
     const { selectedFile, setSelectedFile } = useContext(DataContext)
     const [selectedRoute, setSelectedRoute] = useState('')
+    const [tabsValue, setTabsValue] = useState(0);
     const stopsAsMap = useRef(0)
 
     const { data, isError, isLoading } = getSingleProject(selectedFile)
+
+    const handleTabsChange = (event, newValue) => {
+        setTabsValue(newValue);
+        //console.log(newValue)
+    };
 
     const switchSelectedRoute = (selection) => {
         if (JSON.stringify(selection) == JSON.stringify(selectedRoute)) {
@@ -67,16 +75,26 @@ export default function TFDasboard() {
                     <Summary data={data.summary} />
                 </Paper>
                 <Grid container spacing={2}>
-                    <Grid item sm={12} md={4} >
+                    <Grid item sm={12} md={5} >
                         <Paper elevation={2}>
-                            <TFErrorsAndWarnings data={data.errors} signalSelected={switchSelectedRoute} />
+                            <Tabs value={tabsValue} color='primary' onChange={handleTabsChange} centered>
+                                <Tab label='Просмотр реестра маршрутов' />
+                                <Tab label='Просмотр найденных ошибок' />
+                            </Tabs>
+                            {tabsValue ? <TFErrorsAndWarnings data={data.errors} signalSelected={switchSelectedRoute} /> : <AllRoutes
+                                data={data.registry}
+                                stopsAsMap={stopsAsMap.current}
+                                raiseSelectedRoute={switchSelectedRoute}
+                            />}
                         </Paper>
                     </Grid>
-                    <Grid item sm={12} md={8}>
+                    <Grid item sm={12} md={7}>
                         <Paper elevation={2} >
                             <h1 style={{ marginLeft: 5 }}>Интерактивная карта</h1>
-                            <DeckGLMap objects={data}
+                            <DeckGLMap
+                                objects={data}
                                 stopsAsMap={stopsAsMap.current}
+                                selectedRoute={selectedRoute}
                             />
                         </Paper>
                     </Grid>
@@ -86,6 +104,7 @@ export default function TFDasboard() {
                     <MaximumsPerRoutes data={data.maximums} />
                 </Paper>
                 <br />
+
             </div>
         )
     }
