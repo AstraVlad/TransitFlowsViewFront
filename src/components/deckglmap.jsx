@@ -67,12 +67,10 @@ const customTooltip = (object) => {
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // DeckGL react component
-export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
+export default function DeckGLMap({ data, stopsAsMap, selectedRoute }) {
     const [visibleLayers, setVisibleLayers] = useState(() => ['stops', 'Тм', "Тб", "Ав"])
-    const mapCenter = useMemo(() => getCenter(objects.stops), [objects])
+    const mapCenter = useMemo(() => getCenter(data.stops), [data])
     const [isHighlighted, setIsHighlighted] = useState(false)
-
-    //console.log(selectedRoute, Boolean(selectedRoute), objects.routes_details.filter((elem) => elem.rname_full == selectedRoute.rname_full))
 
     const radius = 10
     const viewState = {
@@ -104,7 +102,7 @@ export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
                 <ToggleButton value='Тб'>Троллейбус (поток в день)</ToggleButton>
                 <ToggleButton value='Ав'>Автобус (поток в день)</ToggleButton>
                 <ToggleButton value='missStops'>Нет остановок отправления</ToggleButton>
-                <ToggleButton value='zeroFlows' disabled={!objects.errors.zero_flows}> Перегоны с нулевым потоком</ToggleButton>
+                <ToggleButton value='zeroFlows' disabled={!data.errors.zero_flows}> Перегоны с нулевым потоком</ToggleButton>
                 <ToggleButton value='maxFlows'>Пиковые перегоны (поток в час)</ToggleButton>
             </ToggleButtonGroup>
 
@@ -137,7 +135,7 @@ export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
                     />
                     <ScatterplotLayer
                         id='stops'
-                        data={objects.stops}
+                        data={data.stops}
                         radiusScale={radius}
                         radiusMinPixels={3}
                         radiusMaxPixels={20}
@@ -156,7 +154,7 @@ export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
 
                     <ArcLayer
                         id='tram_routes'
-                        data={objects.routes_details.filter((elem) => elem.vtype == 'Тм')}
+                        data={data.routes_details.filter((elem) => elem.vtype == 'Тм')}
                         pickable={true}
                         widthUnits='meters'
                         widthScale={0.0035}
@@ -171,7 +169,7 @@ export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
                     />
                     <ArcLayer
                         id='trolley_routes'
-                        data={objects.routes_details.filter((elem) => elem.vtype == 'Тб')}
+                        data={data.routes_details.filter((elem) => elem.vtype == 'Тб')}
                         pickable={true}
                         widthUnits='meters'
                         widthScale={0.0035}
@@ -186,7 +184,7 @@ export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
                     />
                     <ArcLayer
                         id='bus_routes'
-                        data={objects.routes_details.filter((elem) => elem.vtype == 'Ав')}
+                        data={data.routes_details.filter((elem) => elem.vtype == 'Ав')}
                         pickable={true}
                         widthUnits='meters'
                         widthScale={0.0035}
@@ -201,7 +199,7 @@ export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
                     />
                     <ArcLayer
                         id='zero_flows'
-                        data={objects.errors.zero_flows}
+                        data={data.errors.zero_flows}
                         pickable={true}
                         getWidth={5}
                         getSourcePosition={d => [stopsAsMap.get(d.stop_from).long, stopsAsMap.get(d.stop_from).lat]}
@@ -213,7 +211,7 @@ export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
                     />
                     <ArcLayer
                         id='maxFlows'
-                        data={objects.maximums}
+                        data={data.maximums}
                         pickable={true}
                         widthUnits='meters'
                         widthScale={10 * 0.0035}
@@ -228,7 +226,7 @@ export default function DeckGLMap({ objects, stopsAsMap, selectedRoute }) {
                     />
                     <ArcLayer
                         id='selectedRoute'
-                        data={objects.routes_details.filter((elem) => elem.rname_full == selectedRoute.rname_full)}
+                        data={data.routes_details.filter((elem) => elem.rname_full == selectedRoute.rname_full)}
                         pickable={false}
                         widthUnits='meters'
                         widthScale={10 * 0.0035}

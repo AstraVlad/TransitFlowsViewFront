@@ -5,7 +5,6 @@ import sortRoutes from "../../utils/sortroutes";
 
 export default function AllRoutes({ data, stopsAsMap, raiseSelectedRoute }) {
     const [selectedRow, setSelectedRow] = useState(0)
-
     const sortedData = sortRoutes(data, (e) => e.rname)
 
     const columns = useMemo(
@@ -22,7 +21,7 @@ export default function AllRoutes({ data, stopsAsMap, raiseSelectedRoute }) {
                 enableGrouping: false, //do not let this column be grouped
             },
             {
-                accessorFn: (row) => stopsAsMap.get(row.stop_from).name + '->' + stopsAsMap.get(row.stop_to).name,
+                accessorFn: (row) => (row.stop_from === 0 ? '?' : stopsAsMap.get(row.stop_from).name) + '->' + (row.stop_to === 0 ? '?' : stopsAsMap.get(row.stop_to).name),
                 header: 'Маршрут',
                 size: 120,
                 enableGrouping: false,

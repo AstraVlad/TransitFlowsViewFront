@@ -14,6 +14,7 @@ import { useRef } from 'react';
 import DeckGLMap from './deckglmap';
 
 import AllRoutes from './analytics/allroutes';
+import DataPortChart from './ui/dataportchart';
 
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -92,7 +93,7 @@ export default function TFDasboard() {
                         <Paper elevation={2} >
                             <h1 style={{ marginLeft: 5 }}>Интерактивная карта</h1>
                             <DeckGLMap
-                                objects={data}
+                                data={data}
                                 stopsAsMap={stopsAsMap.current}
                                 selectedRoute={selectedRoute}
                             />
@@ -103,7 +104,6 @@ export default function TFDasboard() {
                 <Paper elevation={2}>
                     <MaximumsPerRoutes data={data.maximums} />
                 </Paper>
-                <br />
 
             </div>
         )
@@ -114,4 +114,34 @@ export default function TFDasboard() {
 <RoutesMap stops={data.stops}
     routes={data.registry}
     highlightObjects={selectedRoute} />
+
+ <br />
+                <DataPortChart
+                    data={[
+                        {
+                            vtype: 'Тм',
+                            costs: 1710,
+                            passengers: 47019
+                        },
+                        {
+                            vtype: 'Тб',
+                            costs: 2073,
+                            passengers: 62580
+                        },
+                        {
+                            vtype: 'Ав',
+                            costs: 6111,
+                            passengers: 91935
+                        },
+                    ]}
+                    intenalRadius={20}
+                    maxExternalRadius={250}
+                    getWidth={(d) => d.costs}
+                    getArea={(d) => d.passengers}
+                    gap={0}
+                    getColor={['#FF0033 ', '#00CCFF', '#99FF00', '#FBC02D']}
+                    rotate={270}
+                    strokeWidth={2}
+                    label={((d) => d.vtype)}
+                />
 */

@@ -14,7 +14,7 @@ const projFetcher = async (id) => {
     }
     //console.log(json.data)
     const data = JSON.parse(json.data.replace(/\bNaN\b/g, "null"))
-    console.log(data)
+    //console.log(data)
     return data
 };
 
