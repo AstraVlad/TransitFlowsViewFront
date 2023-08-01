@@ -1,14 +1,14 @@
 const mapColors = {
     stops: {
         normal: [188, 0, 249],
-        higlighted: [249, 0, 172],
+        higlighted: [255, 0, 0],
         muted: [213, 172, 200]
     },
     routes: {
         'Ав': {
             normal: [23, 198, 53],
             higlighted: [0, 181, 15],
-            muted: [177, 215, 184, 180],
+            muted: [177, 215, 184, 150],
             graph: '#50F78F',
             text: 'lightgreen'
         },

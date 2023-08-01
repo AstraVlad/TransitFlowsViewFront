@@ -38,46 +38,49 @@ export default function Summary({ data }) {
     };
     //console.log(data)
     return (
-        <Box display='flex' flexDirection='row'>
-            <TableContainer sx={{ width: '47%', minWidth: 400, maxHeight: 500, m: 1 }}>
-                <Table size="small" >
-                    <TableHead >
-                        <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>№ п/п</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Вид транспорта</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Количество маршрутов</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Протяжённость маршрутов, км</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Дневной пассажиропоток, чел</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {data.map((elem, index) => {
-                            return (<TableRow key={index}
-                                onClick={(e) => console.log(index)}
-                                hover
-                                selected={selectedRow == index}
-                                sx={{ cursor: 'pointer', }}
-                                style={{ backgroundColor: mapColors.routes[elem.vtype].text }}
-                            >
-                                <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>
-                                    {(index + 1).toLocaleString()}
-                                </TableCell>
-                                <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>
-                                    <img src={vtypeIcons[elem.vtype]} width={35} />
-                                </TableCell>
-                                <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>{elem.rname_full}</TableCell>
-                                <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>
-                                    {(elem.length / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                                </TableCell>
-                                <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>
-                                    {elem.in.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                                </TableCell>
-                            </TableRow>)
-                        }
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+        <Box display='flex' flexDirection='row' justifyContent='center'>
+            <Box sx={{ width: '47%', minWidth: 400, maxHeight: 500 }}>
+                <h1>Общая информация</h1>
+                <TableContainer >
+                    <Table size="small" >
+                        <TableHead >
+                            <TableRow>
+                                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>№ п/п</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Вид транспорта</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Количество маршрутов</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Протяжённость маршрутов, км</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Дневной пассажиропоток, чел</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {data.map((elem, index) => {
+                                return (<TableRow key={index}
+                                    onClick={(e) => console.log(index)}
+                                    hover
+                                    selected={selectedRow == index}
+                                    sx={{ cursor: 'pointer', }}
+                                    style={{ backgroundColor: mapColors.routes[elem.vtype].text }}
+                                >
+                                    <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>
+                                        {(index + 1).toLocaleString()}
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>
+                                        <img src={vtypeIcons[elem.vtype]} width={35} />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>{elem.rname_full}</TableCell>
+                                    <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>
+                                        {(elem.length / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center', fontWeight: 700 }}>
+                                        {elem.in.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                    </TableCell>
+                                </TableRow>)
+                            }
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
             <Box width='50%' sx={{ textAlign: 'center' }}>
                 <h2>Доля пассажиропотока по видам транспорта</h2>
                 <ResponsiveContainer width='100%' height={200} >

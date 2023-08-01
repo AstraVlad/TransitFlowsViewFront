@@ -67,7 +67,7 @@ const customTooltip = (object) => {
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // DeckGL react component
-export default function DeckGLMap({ data, stopsAsMap, selectedRoute }) {
+export default function DeckGLMap({ data, stopsAsMap, selectedRoute, selectedStops, vtypes }) {
     const [visibleLayers, setVisibleLayers] = useState(() => ['stops', 'Тм', "Тб", "Ав"])
     const mapCenter = useMemo(() => getCenter(data.stops), [data])
     const [isHighlighted, setIsHighlighted] = useState(false)
@@ -80,6 +80,9 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute }) {
         pitch: 50,
         bearing: 20
     }
+    useEffect(() => {
+        setVisibleLayers(() => visibleLayers.filter((elem) => (elem === 'stops' || vtypes.includes(elem))))
+    }, [])
 
     //const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidWNmLW1hcGJveCIsImEiOiJjbDBiYzlveHgwdnF0M2NtZzUzZWZuNWZ4In0.l9J8ptz3MKwaU9I4PtCcig'
     //const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
@@ -94,15 +97,50 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute }) {
     }
     const tiltLimit = 30
 
+    const getPointColor = (d) => {
+        //console.log('getColor!', d.id, selectedStops)
+        if (selectedStops.includes(d.id)) {
+            //console.log('Selected!', d.id)
+            return mapColors.stops.higlighted
+        } else {
+            return (isHighlighted || selectedStops[0] > 0 ? mapColors.stops.muted : mapColors.stops.normal)
+        }
+    }
+    /*
+        useEffect(() => {
+            console.log(selectedStops)
+            console.log(selectedStops[0] > 0)
+        }, [selectedStops])
+    */
     return (
-        <Box display='flex' flexDirection='column' alignContent='center' justifyContent='center' sx={{ p: 1 }}>
+        <Box display='flex' flexDirection='column' alignContent='center' justifyContent='center' sx={{ boxSizing: 'border-box', p: 1 }}>
             <ToggleButtonGroup value={visibleLayers} size='small' color='info' onChange={handleLayerSwitcherClick}>
                 <ToggleButton value='stops'>Остановки</ToggleButton>
-                <ToggleButton value='Тм'>Трамвай (поток в день)</ToggleButton>
-                <ToggleButton value='Тб'>Троллейбус (поток в день)</ToggleButton>
-                <ToggleButton value='Ав'>Автобус (поток в день)</ToggleButton>
-                <ToggleButton value='missStops'>Нет остановок отправления</ToggleButton>
-                <ToggleButton value='zeroFlows' disabled={!data.errors.zero_flows}> Перегоны с нулевым потоком</ToggleButton>
+                <ToggleButton
+                    value='Тм'
+                    disabled={!vtypes.includes('Тм')}
+                >
+                    Трамвай (поток в день)
+                </ToggleButton>
+                <ToggleButton
+                    value='Тб'
+                    disabled={!vtypes.includes('Тб')}
+                >
+                    Троллейбус (поток в день)
+                </ToggleButton>
+                <ToggleButton
+                    value='Ав'
+                    disabled={!vtypes.includes('Ав')}
+                >
+                    Автобус (поток в день)
+                </ToggleButton>
+
+                <ToggleButton
+                    value='zeroFlows'
+                    disabled={!data.errors.zero_flows}
+                >
+                    Перегоны с нулевым потоком
+                </ToggleButton>
                 <ToggleButton value='maxFlows'>Пиковые перегоны (поток в час)</ToggleButton>
             </ToggleButtonGroup>
 
@@ -140,16 +178,19 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute }) {
                         radiusMinPixels={3}
                         radiusMaxPixels={20}
                         getPosition={d => [d.long, d.lat, 0]}
-                        getRadius={2}
+                        getRadius={d => selectedStops.includes(d.id) ? 20 : 2}
                         minZoom={2}
                         pickable={true}
                         opacity={0.8}
                         stroked={true}
                         filled={true}
-                        getLineColor={d => isHighlighted ? mapColors.stops.muted : mapColors.stops.higlighted}
-                        getFillColor={d => isHighlighted ? mapColors.stops.muted : mapColors.stops.normal}
+                        getLineColor={d => getPointColor(d)}
+                        getFillColor={d => getPointColor(d)}
                         visible={visibleLayers.includes('stops')}
-                        updateTriggers={{ getFillColor: [isHighlighted] }}
+                        updateTriggers={{
+                            getFillColor: [isHighlighted, selectedStops],
+                            getRadius: [selectedStops]
+                        }}
                     />
 
                     <ArcLayer
@@ -227,9 +268,9 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute }) {
                     <ArcLayer
                         id='selectedRoute'
                         data={data.routes_details.filter((elem) => elem.rname_full == selectedRoute.rname_full)}
-                        pickable={false}
+                        pickable={true}
                         widthUnits='meters'
-                        widthScale={10 * 0.0035}
+                        widthScale={3 * 0.0035}
                         widthMinPixels={1}
                         getWidth={d => d.flow}
                         getSourcePosition={d => [stopsAsMap.get(d.stop_from).long, stopsAsMap.get(d.stop_from).lat]}

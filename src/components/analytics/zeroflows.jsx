@@ -1,7 +1,7 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
-export default function ZeroFlows({ zeroFlows }) {
+export default function ZeroFlows({ zeroFlows, stopsAsMap }) {
 
     return (
         <TableContainer sx={{ maxWidth: '47vw', minWidth: 400, height: 350, m: 1 }}>
@@ -21,7 +21,7 @@ export default function ZeroFlows({ zeroFlows }) {
                         >
                             <TableCell>{elem.rname_full}</TableCell>
                             <TableCell sx={{ textAlign: 'center' }}>{elem.direction}</TableCell>
-                            <TableCell>{elem.stop_from} - {elem.stop_to}</TableCell>
+                            <TableCell>{stopsAsMap.get(elem.stop_from).name} - {stopsAsMap.get(elem.stop_to).name}</TableCell>
                             <TableCell sx={{ textAlign: 'center' }}>{elem.legid}</TableCell>
                         </TableRow>)
                     }

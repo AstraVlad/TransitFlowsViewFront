@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
-export default function MissingStops({ missingStops, signalSelected }) {
+export default function MissingStops({ missingStops, signalSelected, registry }) {
     const [selectedRow, setSelectedRow] = useState(-1)
 
     const processTableClick = (_, route, index) => {
@@ -10,11 +10,13 @@ export default function MissingStops({ missingStops, signalSelected }) {
         } else {
             setSelectedRow(index)
         }
-        signalSelected({
-            rname: route.rname_full,
-            direction: route.direction,
-            nextStop: route.stop_to,
-        })
+        console.log(route.stop_to)
+        signalSelected(
+            {
+                route: registry.find((elem) => elem.rname_full === route.rname_full),
+                stop: route.stop_to
+            }
+        )
     }
     return (
         <TableContainer sx={{ maxWidth: '47vw', minWidth: 400, height: 350, m: 1 }}>
@@ -37,7 +39,7 @@ export default function MissingStops({ missingStops, signalSelected }) {
                         >
                             <TableCell>{elem.rname_full}</TableCell>
                             <TableCell sx={{ textAlign: 'center' }}>{elem.direction}</TableCell>
-                            <TableCell>"{elem.stop_to_name}"</TableCell>
+                            <TableCell>"{elem.stop_to_name}" ({elem.stop_to})</TableCell>
                             <TableCell sx={{ textAlign: 'center' }}>{elem.legid}</TableCell>
                         </TableRow>)
                     }

@@ -21,6 +21,7 @@ import DataPortChart from './ui/dataportchart';
 export default function TFDasboard() {
     const { selectedFile, setSelectedFile } = useContext(DataContext)
     const [selectedRoute, setSelectedRoute] = useState('')
+    const [selectedStop, setSelectedStop] = useState('')
     const [tabsValue, setTabsValue] = useState(0);
     const stopsAsMap = useRef(0)
 
@@ -37,6 +38,20 @@ export default function TFDasboard() {
         } else {
             setSelectedRoute(selection)
         }
+        setSelectedStop('')
+    }
+
+    const switchSelectedStop = (selection) => {
+        if (selectedStop === selection) {
+            setSelectedStop('')
+        } else {
+            setSelectedStop(selection)
+        }
+    }
+
+    const getSelectedFromMissingStops = (selection) => {
+        switchSelectedRoute(selection.route)
+        switchSelectedStop(selection.stop)
     }
 
     if (isLoading) {
@@ -71,31 +86,42 @@ export default function TFDasboard() {
         stopsAsMap.current = new Map(data.stops.map((stop) => [stop.id, stop]))
         return (
             <div>
-                <Paper elevation={2}>
-                    <h1>Общая информация</h1>
+                <Paper elevation={2} sx={{ maxHeight: 400, paddingLeft: 2, boxSizing: 'border-box' }}>
                     <Summary data={data.summary} />
                 </Paper>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} sx={{ boxSizing: 'border-box', marginTop: 1 }}>
                     <Grid item sm={12} md={5} >
-                        <Paper elevation={2}>
+                        <Paper
+                            elevation={2}
+                            sx={{
+                                boxSizing: 'border-box',
+                                paddingLeft: 1,
+                                paddingRight: 1,
+                                paddingBottom: 1,
+                            }}>
+
                             <Tabs value={tabsValue} color='primary' onChange={handleTabsChange} centered>
                                 <Tab label='Просмотр реестра маршрутов' />
                                 <Tab label='Просмотр найденных ошибок' />
                             </Tabs>
-                            {tabsValue ? <TFErrorsAndWarnings data={data.errors} signalSelected={switchSelectedRoute} /> : <AllRoutes
+                            {tabsValue ? <TFErrorsAndWarnings data={data} signalSelected={getSelectedFromMissingStops} stopsAsMap={stopsAsMap.current} /> : <AllRoutes
                                 data={data.registry}
                                 stopsAsMap={stopsAsMap.current}
+                                selectedRoute={selectedRoute}
                                 raiseSelectedRoute={switchSelectedRoute}
                             />}
+
                         </Paper>
                     </Grid>
                     <Grid item sm={12} md={7}>
-                        <Paper elevation={2} >
-                            <h1 style={{ marginLeft: 5 }}>Интерактивная карта</h1>
+                        <Paper elevation={2} sx={{ boxSizing: 'border-box', paddingLeft: 1, paddingTop: 1 }}>
+                            <h1 style={{ marginLeftLeft: 5 }}>Интерактивная карта</h1>
                             <DeckGLMap
                                 data={data}
                                 stopsAsMap={stopsAsMap.current}
                                 selectedRoute={selectedRoute}
+                                selectedStops={[selectedStop]}
+                                vtypes={data.summary.map(elem => elem.vtype)}
                             />
                         </Paper>
                     </Grid>
