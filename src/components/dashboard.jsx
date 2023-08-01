@@ -50,8 +50,15 @@ export default function TFDasboard() {
     }
 
     const getSelectedFromMissingStops = (selection) => {
-        switchSelectedRoute(selection.route)
-        switchSelectedStop(selection.stop)
+        if (selectedRoute != '' && selectedStop != '' && selection.route.rname_full !== selectedRoute.rname_full && selection.stop === selectedStop) {
+            switchSelectedRoute(selection.route)
+        } else if (selectedRoute != '' && selectedStop != '' && selection.route.rname_full === selectedRoute.rname_full && selection.stop !== selectedStop) {
+            switchSelectedStop(selection.stop)
+        } else {
+            switchSelectedRoute(selection.route)
+            switchSelectedStop(selection.stop)
+        }
+
     }
 
     if (isLoading) {

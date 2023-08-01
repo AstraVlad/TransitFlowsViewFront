@@ -270,14 +270,15 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute, selectedSto
                         data={data.routes_details.filter((elem) => elem.rname_full == selectedRoute.rname_full)}
                         pickable={true}
                         widthUnits='meters'
-                        widthScale={3 * 0.0035}
+                        widthScale={2 * 0.0035}
                         widthMinPixels={1}
                         getWidth={d => d.flow}
                         getSourcePosition={d => [stopsAsMap.get(d.stop_from).long, stopsAsMap.get(d.stop_from).lat]}
                         getTargetPosition={d => [stopsAsMap.get(d.stop_to).long, stopsAsMap.get(d.stop_to).lat]}
-                        getSourceColor={[250, 250, 0]}
-                        getTargetColor={[250, 250, 0]}
+                        getSourceColor={[255, 220, 0]}
+                        getTargetColor={[100, 250, 100]}
                         visible={selectedRoute}
+                        getTilt={() => tiltLimit * (Math.random() - 0.5)}
 
                     />
                 </DeckGL>

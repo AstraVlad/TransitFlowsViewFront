@@ -10,7 +10,7 @@ export default function MissingStops({ missingStops, signalSelected, registry })
         } else {
             setSelectedRow(index)
         }
-        console.log(route.stop_to)
+        //console.log(route.stop_to)
         signalSelected(
             {
                 route: registry.find((elem) => elem.rname_full === route.rname_full),
