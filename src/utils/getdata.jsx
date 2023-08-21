@@ -22,6 +22,7 @@ const projFetcher = async (id) => {
 
 export function getProjects() {
     const { data, error, isLoading } = useSWR('0', projFetcher)
+    console.log(data)
     return {
         projects: data,
         isError: error,

@@ -14,7 +14,7 @@ import { useRef } from 'react';
 import DeckGLMap from './deckglmap';
 
 import AllRoutes from './analytics/allroutes';
-import DataPortChart from './ui/dataportchart';
+//import DataPortChart from './ui/dataportchart';
 
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -96,6 +96,9 @@ export default function TFDasboard() {
                 <Paper elevation={2} sx={{ maxHeight: 400, paddingLeft: 2, boxSizing: 'border-box' }}>
                     <Summary data={data.summary} />
                 </Paper>
+                <Paper elevation={2}>
+                    <MaximumsPerRoutes data={data.maximums} />
+                </Paper>
                 <Grid container spacing={2} sx={{ boxSizing: 'border-box', marginTop: 1 }}>
                     <Grid item sm={12} md={5} >
                         <Paper
@@ -134,9 +137,7 @@ export default function TFDasboard() {
                     </Grid>
                 </Grid>
                 <br />
-                <Paper elevation={2}>
-                    <MaximumsPerRoutes data={data.maximums} />
-                </Paper>
+
 
             </div>
         )

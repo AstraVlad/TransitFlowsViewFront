@@ -39,7 +39,7 @@ export default function MaximumsPerRoutes({ data }) {
     //console.log(data)
     return (
         <Box sx={{ width: '100%', height: "100%", ml: 2, paddingTop: 1 }}>
-            <h3>Максимальные пассажиропотоки по маршрутам</h3>
+            <h3>Максимальные пассажиропотоки по маршрутам (чел/час)</h3>
             {/*<Slider
                 aria-label="Количество маршрутов"
                 value={routesToShow}

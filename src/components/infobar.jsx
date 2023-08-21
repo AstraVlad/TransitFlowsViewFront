@@ -16,12 +16,16 @@ export default function InfoBar({ metadata, themeSwitcher, selectedFile }) {
                 <Typography variant="h6" color="inherit" component="p">
                     {selectedFile}
                 </Typography>
-                <Switch
-                    id='theme-switch'
-                    onChange={themeSwitcher}
-                    color='secondary'
-                />
+
             </Toolbar>
         </AppBar>
     )
 }
+
+/*
+ <Switch
+                    id='theme-switch'
+                    onChange={themeSwitcher}
+                    color='secondary'
+                />
+                */

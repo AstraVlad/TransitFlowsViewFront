@@ -73,6 +73,12 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute, selectedSto
     const [isHighlighted, setIsHighlighted] = useState(false)
 
     const radius = 10
+    const selectedStopRadius = 20
+    const deselectedStopRadius = 2
+
+    const tiltLimit = 30
+    const highlighters = ['missStops', 'zeroFlows', 'maxFlows']
+
     const viewState = {
         longitude: mapCenter.longitude,
         latitude: mapCenter.latitude,
@@ -84,18 +90,22 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute, selectedSto
         setVisibleLayers(() => visibleLayers.filter((elem) => (elem === 'stops' || vtypes.includes(elem))))
     }, [])
 
+    const checkHighlighted = () => {
+        return (visibleLayers.filter(layer => highlighters.includes(layer)).length > 0) || (typeof selectedRoute === 'object')
+    }
+
     //const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidWNmLW1hcGJveCIsImEiOiJjbDBiYzlveHgwdnF0M2NtZzUzZWZuNWZ4In0.l9J8ptz3MKwaU9I4PtCcig'
     //const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
     //const MAP_STYLE = 'https://api.maptiler.com/maps/streets-v2/style.json?key=dCONZDYyeGeUjElb5LHi'
     //const MAP_STYLE = 'https://api.maptiler.com/tiles/v3/tiles.json?key=kznYvrAC6DrOZXPCW05C';
     //const MAP_STYLE = 'https://api.maptiler.com/maps/openstreetmap/style.json?key=dCONZDYyeGeUjElb5LHi'
 
-    const highlighters = ['missStops', 'zeroFlows', 'maxFlows']
+
     const handleLayerSwitcherClick = (_, layer) => {
-        setIsHighlighted(layer.filter(e => highlighters.includes(e)).length > 0)
+        //setIsHighlighted(layer.filter(e => highlighters.includes(e)).length > 0)
         setVisibleLayers(layer)
     }
-    const tiltLimit = 30
+
 
     const getPointColor = (d) => {
         //console.log('getColor!', d.id, selectedStops)
@@ -106,12 +116,15 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute, selectedSto
             return (isHighlighted || selectedStops[0] > 0 ? mapColors.stops.muted : mapColors.stops.normal)
         }
     }
-    /*
-        useEffect(() => {
-            console.log(selectedStops)
-            console.log(selectedStops[0] > 0)
-        }, [selectedStops])
-    */
+
+    useEffect(() => {
+        /*console.log(typeof selectedRoute)
+        console.log(`selectedRoute: ${selectedRoute}`)
+        console.log(`isHighlighted: ${isHighlighted}`)
+        console.log('result: ', isHighlighted || ((typeof selectedRoute) == 'object'))*/
+        setIsHighlighted(checkHighlighted())
+    }, [selectedRoute, visibleLayers])
+
     return (
         <Box display='flex' flexDirection='column' alignContent='center' justifyContent='center' sx={{ boxSizing: 'border-box', p: 1 }}>
             <ToggleButtonGroup value={visibleLayers} size='small' color='info' onChange={handleLayerSwitcherClick}>
@@ -178,7 +191,7 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute, selectedSto
                         radiusMinPixels={3}
                         radiusMaxPixels={20}
                         getPosition={d => [d.long, d.lat, 0]}
-                        getRadius={d => selectedStops.includes(d.id) ? 20 : 2}
+                        getRadius={d => selectedStops.includes(d.id) ? selectedStopRadius : deselectedStopRadius}
                         minZoom={2}
                         pickable={true}
                         opacity={0.8}
@@ -275,8 +288,8 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute, selectedSto
                         getWidth={d => d.flow}
                         getSourcePosition={d => [stopsAsMap.get(d.stop_from).long, stopsAsMap.get(d.stop_from).lat]}
                         getTargetPosition={d => [stopsAsMap.get(d.stop_to).long, stopsAsMap.get(d.stop_to).lat]}
-                        getSourceColor={[255, 220, 0]}
-                        getTargetColor={[100, 250, 100]}
+                        getSourceColor={[255, 255, 0]}
+                        getTargetColor={[150, 250, 150]}
                         visible={selectedRoute}
                         getTilt={() => tiltLimit * (Math.random() - 0.5)}
 
