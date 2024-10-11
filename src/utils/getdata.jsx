@@ -18,8 +18,6 @@ const projFetcher = async (id) => {
     return data
 };
 
-
-
 export function useProjectsListLoader() {
     const { data, error, isLoading } = useSWR('0', projFetcher)
     return {
