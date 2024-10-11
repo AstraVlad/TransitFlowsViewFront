@@ -4,9 +4,9 @@ import { Box, Paper, Tab, Tabs } from '@mui/material'
 //import RoutesOverlap from './analytics/routesoverlap';
 //import StopsClusters from './analytics/stopsclusters';
 import MaximumsPerRoutes from './analytics/maximums';
-import { getSingleProject } from "../utils/getdata";
-import { DataContext } from '../contexts/DataContext';
-import { useContext, useEffect } from 'react';
+import { useProjectLoader } from "../utils/getdata";
+import { DataContext } from '../contexts/datacontext';
+import { useContext } from 'react';
 import Grid from '@mui/material/Grid';
 import TFErrorsAndWarnings from './analytics/tferrorsandwarnings';
 import { useState } from 'react';
@@ -14,18 +14,18 @@ import { useRef } from 'react';
 import DeckGLMap from './deckglmap';
 
 import AllRoutes from './analytics/allroutes';
-import DataPortChart from './ui/dataportchart';
+//import DataPortChart from './ui/dataportchart';
 
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 export default function TFDasboard() {
-    const { selectedFile, setSelectedFile } = useContext(DataContext)
+    const { selectedFile } = useContext(DataContext)
     const [selectedRoute, setSelectedRoute] = useState('')
     const [selectedStop, setSelectedStop] = useState('')
     const [tabsValue, setTabsValue] = useState(0);
     const stopsAsMap = useRef(0)
 
-    const { data, isError, isLoading } = getSingleProject(selectedFile)
+    const { data, isError, isLoading } = useProjectLoader(selectedFile)
 
     const handleTabsChange = (event, newValue) => {
         setTabsValue(newValue);

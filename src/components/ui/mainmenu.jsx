@@ -5,11 +5,11 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { DataContext } from '../../contexts/DataContext';
+import { DataContext } from '../../contexts/datacontext';
 import { useContext } from 'react';
 
 export default function MainMenu() {
-  const { selectedFile, setSelectedFile } = useContext(DataContext)
+  const { setSelectedFile } = useContext(DataContext)
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 

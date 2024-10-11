@@ -3,7 +3,7 @@ import { Box } from '@mui/material'
 import InfoBar from './components/infobar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ProjectSelector from './components/projectselector';
-import { DataContext } from './contexts/DataContext';
+import { DataContext } from './contexts/datacontext';
 import TFDasboard from './components/dashboard';
 
 
@@ -11,13 +11,14 @@ import TFDasboard from './components/dashboard';
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
 const lightTheme = createTheme({ palette: { mode: 'light' } });
 
-
+/*
 const projectData = {
   name: 'Пробный проект',
   city: 'Какой-то город',
   year: '20ХХ',
   variant: 'Незнамо какой'
 }
+  */
 
 function App() {
   const [theme, setTheme] = useState(lightTheme)

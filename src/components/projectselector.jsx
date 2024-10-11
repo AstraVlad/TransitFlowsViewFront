@@ -1,5 +1,5 @@
 import { Box, Button, colors } from "@mui/material";
-import { getProjects } from "../utils/getdata";
+import { useProjectsListLoader } from "../utils/getdata";
 import RichObjectTreeView from "./ui/richtreeview";
 import { useState } from "react";
 
@@ -11,7 +11,7 @@ const isFile = (path) => {
 }
 
 export default function ProjectSelector({ setSelected }) {
-    const { projects, isError, isLoading } = getProjects()
+    const { projects, isError, isLoading } = useProjectsListLoader()
     const [fileSelected, setFileSelected] = useState('')
 
     if (isLoading) {

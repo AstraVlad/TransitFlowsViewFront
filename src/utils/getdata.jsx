@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import axios from 'axios'
 
-const projectsUrl = 'http://localhost:8000/projects'
+const projectsUrl = 'http://5.61.61.4:9020/projects'
 
 const projFetcher = async (id) => {
     //console.log(id)
@@ -20,7 +20,7 @@ const projFetcher = async (id) => {
 
 
 
-export function getProjects() {
+export function useProjectsListLoader() {
     const { data, error, isLoading } = useSWR('0', projFetcher)
     return {
         projects: data,
@@ -29,7 +29,7 @@ export function getProjects() {
     }
 }
 
-export function getSingleProject(id) {
+export function useProjectLoader(id) {
     const { data, error, isLoading } = useSWR(id, projFetcher, {
         revalidateIfStale: false,
         revalidateOnFocus: false,

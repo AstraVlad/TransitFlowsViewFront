@@ -9,7 +9,7 @@ import { BitmapLayer } from '@deck.gl/layers';
 //import './deckglmap.css'
 import { useEffect } from 'react';
 import mapColors from '../utils/colors';
-import { Box, Button, ButtonGroup, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useState } from 'react';
 //import { useRef } from 'react';
 import { useMemo } from 'react';
@@ -275,8 +275,8 @@ export default function DeckGLMap({ data, stopsAsMap, selectedRoute, selectedSto
                         getWidth={d => d.flow}
                         getSourcePosition={d => [stopsAsMap.get(d.stop_from).long, stopsAsMap.get(d.stop_from).lat]}
                         getTargetPosition={d => [stopsAsMap.get(d.stop_to).long, stopsAsMap.get(d.stop_to).lat]}
-                        getSourceColor={[255, 220, 0]}
-                        getTargetColor={[100, 250, 100]}
+                        getSourceColor={[255, 255, 0]}
+                        getTargetColor={[200, 255, 100]}
                         visible={selectedRoute}
                         getTilt={() => tiltLimit * (Math.random() - 0.5)}
 
